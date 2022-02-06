@@ -1,33 +1,182 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poke Dextr</title>
+    <style>
+              
+      main {
+            margin: 0;
+            padding-left: 10px;
+             background-image: url('https://assets.pokemon.com/assets//cms2/img/video-games/_downloads/go/pokemon-go-team-mystic-169-en.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+              }
+
+      .navi {
+            border: 1px solid;
+            text-align: left;
+            font-size: 30px;
+            background-color: green;
+          }
+
+      .navi a {
+            text-decoration: none;
+            color: white;
+          }
+
+      .navi_right {
+            float: right;
+            font-size: 15px;
+          }
+
+      #listing {
+            max-height: 600px;
+            width: 150px;
+            border: 1px solid;
+            overflow-y: scroll;
+            background-colour: blue;
+            font-size: 25px;
+            text-align: left;
+            padding: 35px;
+            
+          }
+
+      #listing a {
+            text-decoration: none;
+            display: block;
+            padding: 12px;
+            text-decoration: none;
+            width: 100px;
+            
+          }
+
+      #listing a:hover {
+            background-colour: white;
+            cursor: pointer;
+
+          }
+
+      #result {
+            height: 450px;
+            width: 350px;
+            text-decoration: none;
+            list-style-type: none;
+            text-align: centre;
+            background: #eee;
+            margin-right: 100px;         
+            margin-left: 600px;
+            position: absolute;
+            top: 150px;
+            border: 5px solid red;
+
+
+      }
+
+    
+      #pkmImg {
+          width: 300px;
+          height: 300px;
+        }
+    </style>
   </head>
-
-  <body>
-   
-
-    <script>
-
-        function getPokemonDetail(pokemonName){
-          //given a pokemon name performs an ajax requests querying the pokemon's data and pass it to displayPokemon()
-        }
-
-        function getAllPokemon(){
-          //performs an ajax request to the spcified url to get pokemon data then pass it to displayListing()
-        }
-
-        function displayListing(pokeList){
-           //Renders a list of pokemon links to the page  
-        }
-
-        function displayPokemonDetail(pokemon){
-          //renders details of the specified pokemon onto the page
-        }
-
-        getAllPokemon();
+      <body>
+        <nav>
+          <div class="navi">
+            <a href="#" class="title">Poke Dextr</a>
+            <div class="navi_right">
+              <a href="index.html">Listing</a>
+            </div>
+          </div>
+  </nav>
+  <script>
        
-    </script>
-        
-  </body>
-</html>
+ 
+async function getPokemonDetail(pokemonName){
+    
+    let url = 'https://pokeapi.co/api/v2/pokemon/'+ pokemonName
+    try{
+      let rst = await fetch(url);
+      let result = await rst.json();
+      displayPokemonDetail(result);
+    }
+    catch(e){
+      console.log(e);
+    }
+} //given a pokemon name performs an ajax requests querying the pokemon's data and pass it to displayPokemonDetail()
+
+
+
+ async function getAllPokemon(){
+  let url = "https://pokeapi.co/api/v2/pokemon/?limit=50&offset=50"
+    try{
+    let response = await fetch (url);
+    let result = await response.json();
+      displayListing(result);
+    }catch (e){
+      console.log(e);
+}  
+}//performs an ajax request to the spcified url to get pokemon data then pass it to displayListing()
+
+
+
+function displayListing(pokedata){
+  let lists = document.querySelector("#listing");
+    for (let result of pokedata.results){
+       lists.innerHTML +=
+        ` <li><button id = "${result.name}" onclick =   "getPokemonDetail(this.id)">
+          <a href="#"
+            class="collection-item" >${result.name}</a>
+          </button></li>`
+}
+getPokemonDetail('dugtrio'); //Sets Dugtrio as the default parameter
+}//Renders a list of pokemon links to the page
+
+
+
+function displayPokemonDetail(pokemon){
+    
+    let temp = '';
+      
+      temp += `
+             
+          <a class= "colection-item">
+
+            <li>
+            <img id= pkmImg src="${pokemon.sprites.front_default}" alt ="image"/></li>
+            <li>Name: ${pokemon.name}</li>
+            <li>ID: ${pokemon.id}</li>
+            <li>Type: ${pokemon.types[0].type.name}</li>
+            <li>Weight: ${pokemon.weight}</li>
+            <li>Height: ${pokemon.height}</li>
+
+          </a>`;
+
+let info = document.querySelector("#result");
+info.innerHTML = temp;
+} //renders details of the specified pokemon onto the page
+ 
+getAllPokemon();
+
+
+
+  </script>
+
+    <main>
+      <div class="container">
+        <button>
+          <div class="col-3 master ">
+            <ul id="listing">
+            </ul>
+          </div>
+            
+        </button>
+          <div class="col-9 detail">
+            <ul id="result">
+            </ul>
+          </div>
+          </div>
+      </main>
+    </body>
+ </html>
